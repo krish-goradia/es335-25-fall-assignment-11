@@ -66,7 +66,7 @@ class DecisionTree:
             self.label = y.mean()  # regression leaf
             return
 
-        best_feature, _, best_gain = opt_split_attribute(X, y, "mse")
+        best_feature, _, best_gain = opt_split_attribute(X, y, self.criterion)
         if best_feature is None:
             self.label = y.mean()
             return
@@ -85,11 +85,12 @@ class DecisionTree:
         
     def fit_real_disc(self, X: pd.DataFrame, y: pd.Series):
         feature = X.columns
-        if len(set(y)) == 1 or self.depth == self.max_depth or X.columns == 0:
+        if len(set(y)) == 1 or self.depth == self.max_depth or X.shape[1] == 0:
             self.label = y.mode()[0]
             return
         
         bestFeature, bestThreshold, bestGain = opt_split_attribute(X, y, self.criterion)
+        self.threshold = bestThreshold
 
         if bestFeature is None:
             self.label = y.mode()[0]
@@ -98,10 +99,48 @@ class DecisionTree:
         self.feature = bestFeature
         col = X[bestFeature]
 
+        left_X, left_y, right_X, right_y = split_data(X,y,bestFeature,bestThreshold)
+
         self.left = DecisionTree(self.criterion,self.max_depth,self.depth+1)
         self.right = DecisionTree(self.criterion,self.max_depth,self.depth+1)
 
+        if left_y.empty:
+            self.left.label = y.mode()[0]
+        else:
+            self.left.fit_real_disc(left_X.drop(columns=[bestFeature]),left_y)
+        if right_y.empty:
+            self.right.label = y.mode()[0]
+        else:
+            self.right.fit_real_disc(right_X.drop(columns=[bestFeature]),right_y)
 
+    def fit_real_real(self, X: pd.DataFrame, y: pd.Series):
+        feature = X.columns
+
+        if len(set(y)) == 1 or self.depth == self.max_depth or X.shape[1] == 0:
+            self.label = y.mean()  # regression leaf
+            return
+
+        bestFeature, bestThreshold, best_gain = opt_split_attribute(X, y, self.criterion)
+        if bestFeature is None:
+            self.label = y.mean()
+            return
+
+        self.feature = bestFeature
+        self.threshold = bestThreshold
+        
+        left_X, left_y, right_X, right_y = split_data(X,y,bestFeature,bestThreshold)
+
+        self.left = DecisionTree(self.criterion,self.max_depth,self.depth+1)
+        self.right = DecisionTree(self.criterion,self.max_depth,self.depth+1)
+
+        if left_y.empty:
+            self.left.label = y.mode()[0]
+        else:
+            self.left.fit_real_disc(left_X.drop(columns=[bestFeature]),left_y)
+        if right_y.empty:
+            self.right.label = y.mode()[0]
+        else:
+            self.right.fit_real_disc(right_X.drop(columns=[bestFeature]),right_y)
 
     def predict(self, X: pd.DataFrame) -> pd.Series:
         result = []
