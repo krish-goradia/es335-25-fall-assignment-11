@@ -77,15 +77,15 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
 
     Returns: information gain value (float)
     """
-    # Original impurity
-    if criterion == "information_gain":
-        original_impurity = entropy(Y)
-    elif criterion == "gini_index":
-        original_impurity = gini_index(Y)
-    elif criterion == "mse":
-        original_impurity = mse(Y)
-    else:
-        raise ValueError("Invalid criterion.")
+    if check_ifreal(Y):  
+            original_impurity = mse(Y)
+    else: 
+        if criterion == "information_gain": 
+            original_impurity = entropy(Y)
+        elif criterion == "gini_index": 
+            original_impurity = gini_index(Y)
+        else:
+            raise ValueError("Invalid criterion.")
 
     weighted_impurity = 0
 
