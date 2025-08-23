@@ -20,7 +20,7 @@ def accuracy(y_hat: pd.Series, y: pd.Series) -> float:
     correct_samples = (y_hat==y).sum()
     total_samples = len(y)
 
-    return correct_samples/total_samples
+    return float(correct_samples/total_samples)
 
 
 def precision(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
@@ -34,7 +34,7 @@ def precision(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
     
     if true_positive + false_positive == 0:
         return 0.0
-    return true_positive/(true_positive+false_positive)
+    return float(true_positive/(true_positive+false_positive))
 
 
 def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
@@ -48,7 +48,7 @@ def recall(y_hat: pd.Series, y: pd.Series, cls: Union[int, str]) -> float:
 
     if true_positive + false_negative == 0:
         return 0.0
-    return true_positive/(false_negative+true_positive)
+    return float(true_positive/(false_negative+true_positive))
 
 
 def rmse(y_hat: pd.Series, y: pd.Series) -> float:

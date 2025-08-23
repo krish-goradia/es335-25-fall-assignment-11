@@ -77,13 +77,16 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
 
     Returns: information gain value (float)
     """
+
     # Original impurity
-    if check_ifreal(Y):
-        original_impurity = mse(Y)
-    else:
-        if criterion == "information_gain":
+    
+
+    if check_ifreal(Y):  
+            original_impurity = mse(Y)
+    else: 
+        if criterion == "information_gain": 
             original_impurity = entropy(Y)
-        elif criterion == "gini_index":
+        elif criterion == "gini_index": 
             original_impurity = gini_index(Y)
         else:
             raise ValueError("Invalid criterion.")
@@ -145,6 +148,7 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion):
     best_feature = None
     best_threshold = None
     best_gain = -float("inf")
+    features = X.columns
 
     for feature in X.columns:
         col = X[feature]
