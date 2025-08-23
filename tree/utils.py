@@ -130,7 +130,7 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
     
 
 
-def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.Series):
+def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion):
     """
     Function to find the optimal attribute to split about.
     If needed you can split this function into 2, one for discrete and one for real valued features.
@@ -144,6 +144,7 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.S
     best_feature = None
     best_threshold = None
     best_gain = -float("inf")
+    features = X.columns
 
     for feature in features:
         col = X[feature]
