@@ -5,7 +5,10 @@ There is no restriction on following the below template, these fucntions are her
 
 import pandas as pd
 import math
-import scipy.special.xlogy
+from scipy.special import xlogy
+import numpy as np
+
+
 
 def one_hot_encoding(X: pd.DataFrame) -> pd.DataFrame:
     """
@@ -14,7 +17,7 @@ def one_hot_encoding(X: pd.DataFrame) -> pd.DataFrame:
     new_encoded_df = pd.DataFrame(index = X.index)
 
     for col in X.columns:
-        if(X[col].dtype.name == "object" and X[col].dtype.name == "category"):
+        if(X[col].dtype.name == "object" or X[col].dtype.name == "category"):
             unique_val = X[col].dropna().unique()
             for val in unique_val:
                 new_encoded_df[f"{col}_{val}"] = (X[col]==val).astype(int)
@@ -45,9 +48,9 @@ def entropy(Y: pd.Series) -> float:
     """
     Function to calculate the entropy
     """
-    values, counts = np.unique(y, return_counts=True)
-    probabilities = counts / len(y)
-    return -np.sum(probabilities * np.log2(probabilities))
+    values, counts = np.unique(Y, return_counts=True)
+    probabilities = counts / len(Y)
+    return -np.sum(xlogy(probabilities,probabilities) / np.log(2))
     
    
 
@@ -56,26 +59,11 @@ def gini_index(Y: pd.Series) -> float:
     """
     Function to calculate the gini index
     """
-    values, counts = np.unique(y, return_counts=True)
-    probabilities = counts / len(y)
+    values, counts = np.unique(Y, return_counts=True)
+    probabilities = counts / len(Y)
     return 1 - np.sum(probabilities ** 2)
 
 
-
-def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
-    """
-    Function to calculate the information gain using criterion (entropy, gini index or MSE)
-    """
-    import pandas as pd
-import numpy as np
-import math
-
-
-    
-
-def mse(y: pd.Series) -> float:
-    mean_val = np.mean(y)
-    return np.mean((y - mean_val) ** 2)
 
 def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=None) -> float:
     """
