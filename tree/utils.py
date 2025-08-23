@@ -78,14 +78,15 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
     Returns: information gain value (float)
     """
     # Original impurity
-    if criterion == "information_gain":
-        original_impurity = entropy(Y)
-    elif criterion == "gini_index":
-        original_impurity = gini_index(Y)
-    elif criterion == "mse":
+    if check_ifreal(Y):
         original_impurity = mse(Y)
     else:
-        raise ValueError("Invalid criterion.")
+        if criterion == "information_gain":
+            original_impurity = entropy(Y)
+        elif criterion == "gini_index":
+            original_impurity = gini_index(Y)
+        else:
+            raise ValueError("Invalid criterion.")
 
     weighted_impurity = 0
 
@@ -193,7 +194,7 @@ def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
     # Split the data based on a particular value of a particular attribute. You may use masking as a tool to split the data.
     col = X[attribute]
 
-    if np.issubdtype(col.dtype, np.number):  # Continuous attribute
+    if pd.api.types.is_numeric_dtype(col):  # Continuous attribute
         # value is a threshold
         left_mask = col <= value
         right_mask = col > value
@@ -202,15 +203,4 @@ def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
         right_X = X[right_mask]
         right_y = y[right_mask]
 
-        return left_X, left_y, right_X, right_y
-    
-    else:  # Categorical attribute
-        # value is a category
-        branches = {}
-        for val in col.unique():
-            mask = col == val
-            branches[val] = (X[mask], y[mask])
-        return branches
-
-    
-    
+        return left_X, left_y, right_X, right_y   
