@@ -9,7 +9,6 @@ from scipy.special import xlogy
 import numpy as np
 
 
-
 def one_hot_encoding(X: pd.DataFrame) -> pd.DataFrame:
     """
     Function to perform one hot encoding on the input data
@@ -53,7 +52,12 @@ def entropy(Y: pd.Series) -> float:
     return -np.sum(xlogy(probabilities,probabilities) / np.log(2))
     
    
+def mse(Y: pd.Series) -> float:
+    mean = Y.mean()
+    mse = float(np.mean((Y - mean) ** 2))
 
+    return mse
+    
 
 def gini_index(Y: pd.Series) -> float:
     """
