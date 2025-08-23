@@ -197,15 +197,20 @@ def split_data(X: pd.DataFrame, y: pd.Series, attribute, value):
         # value is a threshold
         left_mask = col <= value
         right_mask = col > value
+        left_X = X[left_mask]
+        left_y = y[left_mask]
+        right_X = X[right_mask]
+        right_y = y[right_mask]
+
+        return left_X, left_y, right_X, right_y
+    
     else:  # Categorical attribute
         # value is a category
-        left_mask = col == value
-        right_mask = col != value
+        branches = {}
+        for val in col.unique():
+            mask = col == val
+            branches[val] = (X[mask], y[mask])
+        return branches
 
-    left_X = X[left_mask]
-    left_y = y[left_mask]
-    right_X = X[right_mask]
-    right_y = y[right_mask]
-
-    return left_X, left_y, right_X, right_y
+    
     
