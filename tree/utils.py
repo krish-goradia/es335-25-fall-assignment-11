@@ -2,7 +2,7 @@
 You can add your own functions here according to your decision tree implementation.
 There is no restriction on following the below template, these fucntions are here to simply help you.
 """
-
+import numpy as np
 import pandas as pd
 import math
 from scipy.special import xlogy
@@ -78,9 +78,9 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
     Returns: information gain value (float)
     """
     # Original impurity
-    if criterion == "entropy":
+    if criterion == "information_gain":
         original_impurity = entropy(Y)
-    elif criterion == "gini":
+    elif criterion == "gini_index":
         original_impurity = gini_index(Y)
     elif criterion == "mse":
         original_impurity = mse(Y)
@@ -99,10 +99,10 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
         left_weight = len(left_Y) / len(Y)
         right_weight = len(right_Y) / len(Y)
 
-        if criterion == "entropy":
+        if criterion == "information_gain":
             left_impurity = entropy(left_Y)
             right_impurity = entropy(right_Y)
-        elif criterion == "gini":
+        elif criterion == "gini_index":
             left_impurity = gini_index(left_Y)
             right_impurity = gini_index(right_Y)
         else:
@@ -116,9 +116,9 @@ def information_gain(Y: pd.Series, attr: pd.Series, criterion: str, threshold=No
             subset_Y = Y[attr == value]
             weight = len(subset_Y) / len(Y)
 
-            if criterion == "entropy":
+            if criterion == "information_gain":
                 subset_impurity = entropy(subset_Y)
-            elif criterion == "gini":
+            elif criterion == "gini_index":
                 subset_impurity = gini_index(subset_Y)
             else:
                 subset_impurity = mse(subset_Y)
@@ -146,10 +146,10 @@ def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion):
     best_gain = -float("inf")
     features = X.columns
 
-    for feature in features:
+    for feature in X.columns:
         col = X[feature]
 
-        if np.issubdtype(col.dtype, np.number):  # Continuous feature
+        if pd.api.types.is_numeric_dtype(col):  # Continuous feature
             sorted_idx = col.argsort()
             sorted_values = col.iloc[sorted_idx]
             sorted_labels = y.iloc[sorted_idx]
