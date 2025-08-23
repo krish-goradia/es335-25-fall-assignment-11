@@ -2,46 +2,40 @@
 You can add your own functions here according to your decision tree implementation.
 There is no restriction on following the below template, these fucntions are here to simply help you.
 """
-
+import numpy as np
 import pandas as pd
+from collections import Counter
+from scipy.special import xlogy
 
 def one_hot_encoding(X: pd.DataFrame) -> pd.DataFrame:
-    """
-    Function to perform one hot encoding on the input data
-    """
-
-    pass
+    return pd.get_dummies(X, drop_first=False)
 
 def check_ifreal(y: pd.Series) -> bool:
-    """
-    Function to check if the given series has real or discrete values
-    """
+    yClean = y.dropna()
 
-    pass
-
+    if not pd.api.types.is_numeric_dtype(yClean):
+        return False
+    if len(yClean.unique)/len(yClean) > 0.1:
+        return False
+    else:
+        return True
 
 def entropy(Y: pd.Series) -> float:
-    """
-    Function to calculate the entropy
-    """
-
-    pass
+    count = Counter(Y)
+    total = len(Y)
+    return -sum(xlogy(c/total, c/total) for c in count.values())
 
 
 def gini_index(Y: pd.Series) -> float:
-    """
-    Function to calculate the gini index
-    """
-
-    pass
+    probs = Y.value_counts(normalize=True)
+    return 1 - ((probs)**2).sum()
 
 
 def information_gain(Y: pd.Series, attr: pd.Series, criterion: str) -> float:
-    """
-    Function to calculate the information gain using criterion (entropy, gini index or MSE)
-    """
+    pEntropy = entropy(Y)
 
-    pass
+    values, counts = np.unique(attr, return_counts=True)
+    return (pEntropy - sum((counts[i]/len(attr))*entropy(Y[attr == v]) for i,v in enumerate(values)))
 
 
 def opt_split_attribute(X: pd.DataFrame, y: pd.Series, criterion, features: pd.Series):
