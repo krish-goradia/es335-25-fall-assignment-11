@@ -81,7 +81,7 @@ class DecisionTree:
             child = DecisionTree(self.criterion, self.max_depth, self.depth+1)
             self.branches[val] = child
             branch_X, branch_Y = X[mask], y[mask]
-            child.fit_disc_disc(branch_X.drop(columns=[best_feature]),branch_Y)
+            child.fit_disc_real(branch_X.drop(columns=[best_feature]),branch_Y)
         
     def fit_real_disc(self, X: pd.DataFrame, y: pd.Series):
         feature = X.columns
@@ -136,11 +136,11 @@ class DecisionTree:
         if left_y.empty:
             self.left.label = y.mode()[0]
         else:
-            self.left.fit_real_disc(left_X.drop(columns=[bestFeature]),left_y)
+            self.left.fit_real_real(left_X.drop(columns=[bestFeature]),left_y)
         if right_y.empty:
             self.right.label = y.mode()[0]
         else:
-            self.right.fit_real_disc(right_X.drop(columns=[bestFeature]),right_y)
+            self.right.fit_real_real(right_X.drop(columns=[bestFeature]),right_y)
 
     def predict(self, X: pd.DataFrame) -> pd.Series:
         result = []
