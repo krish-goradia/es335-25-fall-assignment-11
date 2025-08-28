@@ -6,7 +6,7 @@ from tree.base import DecisionTree
 from metrics import *
 
 np.random.seed(42)
-num_average_time = 100  # Number of times to run each experiment to calculate the average values
+num_average_time = 10  # Number of times to run each experiment to calculate the average values
 
 def create_fake_data(N, P):
     X = pd.DataFrame({i: pd.Series(np.random.randint(2, size=N), dtype="category") for i in range(P)})
@@ -30,6 +30,7 @@ def measure_time(N,P):
 
         fit_time.append(mid-start)
         predict_time.append(end-mid)
+        print(tree)
     
     return np.mean(fit_time), np.mean(predict_time)
 
@@ -45,7 +46,6 @@ def plot_results(x_values, fit_times, predict_times, x_label, title, P=None, N=N
         theoretical_train = [scale_train * (N * np.log2(N) * p) for p in x_values]
         theoretical_predict = [predict_times[0]] * len(x_values)  # Prediction ~ flat
 
-    # Plot experimental and theoretical curves
     plt.figure(figsize=(8, 5))
     plt.plot(x_values, fit_times, marker='o', label="Training Time (Experimental)")
     plt.plot(x_values, predict_times, marker='s', label="Prediction Time (Experimental)")
@@ -58,12 +58,7 @@ def plot_results(x_values, fit_times, predict_times, x_label, title, P=None, N=N
     plt.grid()
     plt.show()
 
-# Other functions
-# ...
-# Run the functions, Learn the DTs and Show the results/plots
-
-# Experiment 1: Vary N (samples), keep P fixed
-N_values = [100*i for i in range(2,11)]
+N_values = [10*i for i in range(2,11)]
 P_fixed = 10
 fit_times_N, predict_times_N = [], []
 
